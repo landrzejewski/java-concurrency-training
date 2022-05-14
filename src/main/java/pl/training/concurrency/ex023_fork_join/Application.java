@@ -9,7 +9,7 @@ import java.util.concurrent.ForkJoinPool;
 public class Application {
 
     private static final int PRODUCTS_COUNT = 100_000_000;
-    private static final int CHUNK_SIZE = 1_000;
+    private static final int CHUNK_SIZE = 10_000_000;
     private static final NumberFormat NUMBER_FORMAT = NumberFormat.getNumberInstance();
 
     public static void main(String[] args) throws ExecutionException, InterruptedException {

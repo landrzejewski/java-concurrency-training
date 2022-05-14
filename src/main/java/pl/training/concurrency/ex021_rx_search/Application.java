@@ -2,6 +2,7 @@ package pl.training.concurrency.ex021_rx_search;
 
 import io.reactivex.Observable;
 import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.functions.Predicate;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -66,9 +67,8 @@ public class Application {
     }
 
     private void start() {
-        Runtime.getRuntime()
+       Runtime.getRuntime()
                 .addShutdownHook(new Thread(compositeDisposable::dispose));
-
 
         var disposable = ObservableReader.from(System.in)
                 .debounce(5, TimeUnit.SECONDS)
@@ -93,6 +93,10 @@ public class Application {
 //                        .map(String::toLowerCase)
 //                        .subscribe(System.out::println, System.out::println, () -> System.out.println("Completed"))
 //        );
+    }
+
+    private Predicate<String> isShort() {
+        return text -> text.length() <= 4;
     }
 
 

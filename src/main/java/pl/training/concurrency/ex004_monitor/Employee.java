@@ -16,13 +16,17 @@ public class Employee implements Runnable {
         this.printingQueue = printingQueue;
         this.tasksLimit = tasksLimit;
     }
-
     @Override
     public void run() {
         while (true) {
             synchronized (printingQueue) {
                 waitIfQueueIsFull();
                 addDocument();
+                try {
+                    printingQueue.wait();
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
             }
         }
     }

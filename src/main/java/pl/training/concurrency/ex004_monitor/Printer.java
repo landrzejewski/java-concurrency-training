@@ -20,6 +20,11 @@ public class Printer implements Runnable {
             synchronized (printingQueue) {
                 waitIfQueueIsEmpty();
                 printDocument();
+                try {
+                    printingQueue.wait();
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
             }
         }
     }

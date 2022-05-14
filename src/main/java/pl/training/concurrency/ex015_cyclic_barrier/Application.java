@@ -4,7 +4,7 @@ import java.util.concurrent.CyclicBarrier;
 
 public class Application {
 
-    private static final int THREADS_COUNT = 4;
+    private static final int THREADS_COUNT = 10;
 
     public static void main(String[] args) throws InterruptedException {
         CyclicBarrier cyclicBarrier = new CyclicBarrier(5);
