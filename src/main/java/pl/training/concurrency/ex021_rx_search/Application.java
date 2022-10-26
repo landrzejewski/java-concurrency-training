@@ -16,6 +16,7 @@ import retrofit2.converter.jackson.JacksonConverterFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import static io.reactivex.Observable.zip;
@@ -89,6 +90,13 @@ public class Application {
                 .distinct();*/
 
 
+        Integer a = null;
+        var test = Optional.ofNullable(a)
+                .flatMap(integer -> Optional.of(integer * 2));
+
+        System.out.println(test);
+
+
         var stream = ObservableReader.from(System.in)
                 .debounce(5, TimeUnit.SECONDS)
                 .flatMap(this::sendQueries)
@@ -96,8 +104,8 @@ public class Application {
                 .map(String::toLowerCase)
                 .filter(hasLength(16));
 
-        var disposable = stream.subscribe(System.out::println, System.out::println, () -> System.out.println("Completed"));
-        compositeDisposable.add(disposable);
+    //    var disposable = stream.subscribe(System.out::println, System.out::println, () -> System.out.println("Completed"));
+      //  compositeDisposable.add(disposable);
     }
 
     private Predicate<String> isShort() {
