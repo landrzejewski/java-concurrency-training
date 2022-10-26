@@ -72,7 +72,7 @@ public class Application {
         return text -> text.length() > length;
     }
 
-    private Observable<List<String>> sendQuriesQueries(String text) {
+    private Observable<List<String>> sendQueries(String text) {
         return zip(sendGithubQuery(text), sendWikipediaQuery(text), this::combineResults);
     }
 
@@ -91,7 +91,7 @@ public class Application {
 
         var stream = ObservableReader.from(System.in)
                 .debounce(5, TimeUnit.SECONDS)
-                .flatMap(this::sendQuriesQueries)
+                .flatMap(this::sendQueries)
                 .flatMap(Observable::fromIterable)
                 .map(String::toLowerCase)
                 .filter(hasLength(16));
