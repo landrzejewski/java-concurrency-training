@@ -14,7 +14,6 @@ public class WikipediaService {
     }
 
     public Observable<List<Article>> getArticles(String query) {
-        System.out.println("Get articles...");
         return wikipediaApi.getArticles(query)
                 .map(response -> response.getQuery().getSearch());
     }

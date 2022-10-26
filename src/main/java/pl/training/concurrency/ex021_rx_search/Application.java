@@ -18,6 +18,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import static io.reactivex.Observable.zip;
+
 public class Application {
 
     private final GithubService githubService = new GithubService(retrofitBuilder("https://api.github.com/"));
@@ -66,33 +68,36 @@ public class Application {
                 .subscribeOn(Schedulers.io());
     }
 
+    private Predicate<String> hasLength(int length) {
+        return text -> text.length() > length;
+    }
+
+    private Observable<List<String>> sendQuriesQueries(String text) {
+        return zip(sendGithubQuery(text), sendWikipediaQuery(text), this::combineResults);
+    }
+
     private void start() {
-       Runtime.getRuntime()
+        Runtime.getRuntime()
                 .addShutdownHook(new Thread(compositeDisposable::dispose));
 
-        var disposable = ObservableReader.from(System.in)
+       /* var stream = githubService.getRepositories("java")
+                .flatMap(Observable::fromIterable)
+                .map(Repository::getName)
+                .map(String::toLowerCase)
+                .filter(hasLength(16))
+                .sorted()
+                .distinct();*/
+
+
+        var stream = ObservableReader.from(System.in)
                 .debounce(5, TimeUnit.SECONDS)
-                .flatMap(query -> Observable.zip(sendWikipediaQuery(query), sendGithubQuery(query), this::combineResults))
-                .subscribe(System.out::println, System.out::println, () -> System.out.println("Completed"));
+                .flatMap(this::sendQuriesQueries)
+                .flatMap(Observable::fromIterable)
+                .map(String::toLowerCase)
+                .filter(hasLength(16));
 
+        var disposable = stream.subscribe(System.out::println, System.out::println, () -> System.out.println("Completed"));
         compositeDisposable.add(disposable);
-
-
-        /*compositeDisposable.add(
-                ObservableReader.from(System.in)
-                    .flatMap(this::sendWikipediaQuery)
-                    .subscribe(System.out::println, System.out::println, () -> System.out.println("Completed"))
-        );*/
-
-
-//        compositeDisposable.add(
-//                ObservableReader.from(System.in)
-//                        .debounce(5, TimeUnit.SECONDS)
-//                        .flatMap(query -> Observable.zip(sendWikipediaQuery(query), sendGithubQuery(query), this::combineResults))
-//                        .flatMap(Observable::fromIterable)
-//                        .map(String::toLowerCase)
-//                        .subscribe(System.out::println, System.out::println, () -> System.out.println("Completed"))
-//        );
     }
 
     private Predicate<String> isShort() {

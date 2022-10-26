@@ -18,7 +18,6 @@ public class GithubService {
     }
 
     public Observable<List<Repository>> getRepositories(String query) {
-        System.out.println("Get repositories...");
         return githubApi.getRepositories(query)
                 .map(QueryResult::getItems);
     }
