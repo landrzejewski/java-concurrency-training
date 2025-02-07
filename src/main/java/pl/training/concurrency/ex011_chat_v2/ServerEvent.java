@@ -7,7 +7,7 @@ import lombok.Getter;
 @Builder
 class ServerEvent {
 
-    private final ServerEventType type;
+    private ServerEventType type;
     private String payload;
     private Worker source;
 
